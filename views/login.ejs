@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Admin Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Bilbo+Swash+Caps" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Kalam" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/form.css">
+</head>
+<body>
+  <nav class="top_menu">
+     <ul>
+       <li><a href="/">Order Form</a></li>
+       <li><a href="/submissions">All Orders</a></li>
+     </ul>
+  </nav>
+
+  <section class="w50" style="float:none; margin: 50px auto;">
+    <form name="loginform" method="POST" action="/login">
+      <h2 style="margin-top:0;">Admin Login</h2>
+
+      <label>Username</label>
+      <input id="username" placeholder="admin" type="text" name="username" value="<%= values.username || '' %>"><br/>
+
+      <label>Password</label>
+      <input id="password" placeholder="password" type="password" name="password"><br/>
+
+      <input type="submit" value="Log In">
+
+      <% if (error) { %>
+        <p id="errors" style="border: 2px dashed white;">
+          <%= error %>
+        </p>
+      <% } %>
+    </form>
+  </section>
+</body>
+</html>

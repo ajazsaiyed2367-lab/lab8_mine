@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Forms and Validations</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Bilbo+Swash+Caps" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Kalam" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/css/form.css">
+</head>
+<body>
+  <nav class="top_menu">
+     <ul>
+       <li>
+         <a href="/">Order Form</a>
+      </li>
+      <li>
+        <a href="/submissions">All Orders</a>
+     </li>
+     <li style="float:right; width:auto; padding:0 15px;">
+        <% if (isAdmin) { %>
+          Welcome, <%= adminName %> | <a href="/logout">Logout</a>
+        <% } else { %>
+          <a href="/login">Login</a>
+        <% } %>
+     </li>
+     </ul>
+  </nav>
+  <section class="w50">
+    <form name="myform" method="POST" action="/processForm">
+      <label>Name</label>
+      <input id="name" placeholder="First Last" type="text" name="name" value="<%= values.name || '' %>"><br/>
+
+      <label>Email</label>
+      <input id="email" placeholder="email@domain.com" type="email" name="email" value="<%= values.email || '' %>"><br/>
+
+      <label>Phone</label>
+      <input id="phone" placeholder="123-123-1234" type="text" name="phone" value="<%= values.phone || '' %>"><br/>
+
+      <label>Post Code</label>
+      <input id="postcode" placeholder="X9X 9X9" type="text" name="postcode" value="<%= values.postcode || '' %>"><br/>
+
+      <label>Will you have lunch?</label>
+      <input type="radio" value="yes" id="radio1" name="lunch" <%= values.lunch === 'yes' ? 'checked' : '' %>>Yes
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <input type="radio" value="no" id="radio2" name="lunch" <%= values.lunch === 'no' ? 'checked' : '' %>>No
+      <br/>
+
+      <label>Number of Tickets</label>
+      <select name="tickets" id="tickets">
+          <option value="">----- Select -----</option>
+          <option value="1" <%= values.tickets === '1' ? 'selected' : '' %>>1</option>
+          <option value="2" <%= values.tickets === '2' ? 'selected' : '' %>>2</option>
+          <option value="3" <%= values.tickets === '3' ? 'selected' : '' %>>3</option>
+      </select><br/>
+
+      <label>Which Campus?</label>
+      <select name="campus" id="campus">
+          <option value="">----- Select -----</option>
+          <option value="Doon" <%= values.campus === 'Doon' ? 'selected' : '' %>>Doon</option>
+          <option value="Waterloo" <%= values.campus === 'Waterloo' ? 'selected' : '' %>>Waterloo</option>
+          <option value="Cambridge" <%= values.campus === 'Cambridge' ? 'selected' : '' %>>Cambridge</option>
+      </select>
+
+      <br/><br/>
+
+      <input type="submit" value="Submit">
+
+      <% if (errors && errors.length > 0) { %>
+        <p id="errors" style="border: 2px dashed white;">
+          <% errors.forEach(function(err) { %>
+            <%= err.msg %><br/>
+          <% }); %>
+          -- Please fix the above errors --
+        </p>
+      <% } %>
+    </form>
+    <p><a href="/submissions">View all submissions</a></p>
+  </section>
+  <section class="w50">
+    <div class="formData">
+      <% if (result) { %>
+        <p id="formResult">
+          Name: <%= result.name %> <br>
+          Email: <%= result.email %> <br>
+          Lunch: <%= result.lunch %><br>
+          Campus: <%= result.campus %><br>
+          Sub Total: $<%= result.cost %><br>
+          Tax: $<%= result.tax %><br>
+          Total: $<%= result.total %><br>
+        </p>
+      <% } else { %>
+        <p id="formResult">This is where the form data will show up.</p>
+      <% } %>
+    </div>
+  </section>
+  <div class="clear"></div>
+</body>
+</html>
