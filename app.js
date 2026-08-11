@@ -43,14 +43,38 @@ function isAuthenticated(req, res, next) {
 // your real connection string to GitHub.
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/lab7';
 
-mongoose.connect(MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.error('MongoDB connection error:', err));
+// On serverless platforms (like Vercel) each request can hit a fresh
+// function instance, so we cache the connection promise instead of
+// calling mongoose.connect() again on every cold start, and we wait
+// for it to finish before handling the request. Without this, a route
+// can run before the connection is ready and Mongoose queries time out
+// with "buffering timed out" errors.
+let dbConnection = null;
+function connectDB() {
+  if (!dbConnection) {
+    dbConnection = mongoose.connect(MONGODB_URI)
+      .then(() => console.log('Connected to MongoDB'))
+      .catch((err) => {
+        console.error('MongoDB connection error:', err);
+        dbConnection = null; // allow retry on the next request
+        throw err;
+      });
+  }
+  return dbConnection;
+}
+
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    res.status(500).send('Database connection failed. Please try again shortly.');
+  }
+});
 
 // Same regex patterns carried over from Lab 6 / Lab 5
 const postcodeRegex = /^[A-Z][0-9][A-Z]\s[0-9][A-Z][0-9]$/;
 const phoneRegex = /^\(?(\d{3})\)?[\.\-\/\s]?(\d{3})[\.\-\/\s]?(\d{4})$/;
-
 app.get('/', (req, res) => {
   res.render('form', {
     errors: [],
